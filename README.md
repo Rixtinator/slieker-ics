@@ -1,4 +1,4 @@
-# Unofficial Prince Charles Cinema ical calendar
+# Unofficial Slieker ical calendar
 
 Takes https://slieker.nl/programma/ and turns it into a calendar feed!
 

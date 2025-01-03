@@ -1,10 +1,11 @@
 # Unofficial Prince Charles Cinema ical calendar
 
-Takes https://princecharlescinema.com/whats-on/ and turns it into a calendar feed!
+Takes https://slieker.nl/programma/ and turns it into a calendar feed!
 
 Automatically updated every day through the magic of Github Actions.
 
-[Subscribe](webcal://jelmervdl.github.io/prince-charles-cinema-ics/pcc.ics)
+[Subscribe](webcal://rixtinator.github.io/slieker-ics/pcc.ics)
 
-Other calendar feeds:
-- https://github.com/lamby/picturehouse-ics
+Stolen from: 
+- https://github.com/jelmervdl/prince-charles-cinema-ics
+

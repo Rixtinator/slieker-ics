@@ -63,12 +63,16 @@ async function scrape(page, browser, callback) {
     const runtime = await getRuntime(url, browser);
     const end = new Date(start.getTime() + (parseInt(runtime) || 0) * 60_000);
 
-    const status = element.querySelector(".card__status");
-    if (status && status.textContent.trim().match("Uitverkocht")) {
-      return;
+    const status = element.querySelector(".card__tag");
+    let description;
+    if (status) {
+      if (status.textContent.trim().match("Uitverkocht")) return;
+      if (status.textContent.trim().match("Laatste kans!")) description = "Laatste kans";
+      if (status.textContent.trim().match("Eenmalig")) description = "Eenmalig";
     }
+    console.log("STATUS: " + description);
 
-    callback({ title, start, end, url });
+    callback({ title, start, end, url, description});
   }))
 }
 
@@ -93,11 +97,12 @@ async function main() {
   await page.goto("https://sliekerfilm.nl/programma/");
   await page.waitUntilComplete();
 
-  await scrape(page.mainFrame.document, browser, ({ title, start, end, url }) => {
+  await scrape(page.mainFrame.document, browser, ({ title, start, end, url, description }) => {
     calendar.createEvent({
       start,
       end,
       url,
+      description: description,
       summary: title,
       timezone: 'Europe/Amsterdam'
     })

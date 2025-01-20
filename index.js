@@ -63,13 +63,12 @@ async function scrape(page, browser, callback) {
     const runtime = await getRuntime(url, browser);
     const end = new Date(start.getTime() + (parseInt(runtime) || 0) * 60_000);
 
-    let sold_out = false;
     const status = element.querySelector(".card__status");
     if (status && status.textContent.trim().match("Uitverkocht")) {
-      sold_out = true;
+      return;
     }
 
-    callback({ title, start, end, url, sold_out });
+    callback({ title, start, end, url });
   }))
 }
 
@@ -94,7 +93,7 @@ async function main() {
   await page.goto("https://sliekerfilm.nl/programma/");
   await page.waitUntilComplete();
 
-  await scrape(page.mainFrame.document, browser, ({ title, start, end, url, sold_out }) => {
+  await scrape(page.mainFrame.document, browser, ({ title, start, end, url }) => {
     calendar.createEvent({
       start,
       end,

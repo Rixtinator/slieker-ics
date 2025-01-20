@@ -28,11 +28,11 @@ function parseDate(day, time) {
   const minute = parseInt(m);
   // console.log({ today, day, time, date, monthIdx, year, hour, minute });
   return new Date(
-      year,
-      monthIdx,
-      date,
-      hour,
-      minute
+    year,
+    monthIdx,
+    date,
+    hour,
+    minute
   );
 }
 
@@ -47,30 +47,30 @@ async function getRuntime(url, browser) {
 }
 
 async function scrape(page, browser, callback) {
-   const movieElements = page.querySelectorAll(".card--film");
+  const movieElements = page.querySelectorAll(".card--film");
 
-   await Promise.all(Array.from(movieElements).map(async (element) => {
-     const title = element.querySelector(".card__heading").textContent.trim();
+  await Promise.all(Array.from(movieElements).map(async (element) => {
+    const title = element.querySelector(".card__heading").textContent.trim();
 
-     const dayAndTime = (element.querySelector(".card__prose").textContent.trim()).split(" • ");
-     const day = dayAndTime.at(0);
-     const time = dayAndTime.at(1);
-     if (!time) return;
-     const start = parseDate(day, time);
+    const dayAndTime = (element.querySelector(".card__prose").textContent.trim()).split(" • ");
+    const day = dayAndTime.at(0);
+    const time = dayAndTime.at(1);
+    if (!time) return;
+    const start = parseDate(day, time);
 
-     const url = element.querySelector(".card__overlay").href;
+    const url = element.querySelector(".card__overlay").href;
 
-     const runtime = await getRuntime(url, browser);
-     const end = new Date(start.getTime() + (parseInt(runtime) || 0) * 60_000);
+    const runtime = await getRuntime(url, browser);
+    const end = new Date(start.getTime() + (parseInt(runtime) || 0) * 60_000);
 
-     let sold_out = false;
-     const status = element.querySelector(".card__status");
-     if (status && status.textContent.trim().match("Uitverkocht")) {
-         sold_out = true;
-     }
+    let sold_out = false;
+    const status = element.querySelector(".card__status");
+    if (status && status.textContent.trim().match("Uitverkocht")) {
+      sold_out = true;
+    }
 
-     callback({ title, start, end, url, sold_out });
-   }))
+    callback({ title, start, end, url, sold_out });
+  }))
 }
 
 async function main() {
@@ -94,12 +94,13 @@ async function main() {
   await page.goto("https://sliekerfilm.nl/programma/");
   await page.waitUntilComplete();
 
-  await scrape(page.mainFrame.document, browser,({ title, start, end, url, sold_out }) => {
+  await scrape(page.mainFrame.document, browser, ({ title, start, end, url, sold_out }) => {
     calendar.createEvent({
       start,
       end,
       url,
       summary: title,
+      timezone: 'Europe/Amsterdam'
     })
     console.log(title, start, end, url)
   });
